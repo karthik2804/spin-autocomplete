@@ -1,0 +1,4 @@
+#!/bin/sh
+
+docker run --rm --user $(id -u):$(id -g) --volume "$PWD:/app" -e COMPLETELY_OUTPUT_PATH=spin_completions.sh dannyben/completely generate
+git apply plugin-suggestion.patch

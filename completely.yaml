@@ -1,0 +1,269 @@
+spin:
+- build
+- doctor
+- plugins
+- registry
+- templates
+- up
+- watch
+- $(spin plugins list --installed | awk '{print $1}' | grep -v '^trigger-' ) # ignore trigger plugins
+
+###
+# SPIN BUILD
+###
+
+spin build:
+- --component-id
+- --from
+- --up
+
+spin build*--component-id: &nothing
+- ""
+spin build*--from: &file
+- <file>
+spin build*--up: *nothing
+
+###
+# SPIN DOCTOR
+###
+
+spin doctor:
+- --from
+spin doctor --from: *file
+
+###
+# SPIN PLUGINS
+###
+
+spin plugins:
+- install
+- list
+- search
+- uninstall
+- update 
+- upgrade
+
+spin plugins update: *nothing
+spin plugins uninstall:
+- $(spin plugins list --installed | awk '{print $1}')
+
+spin plugins list:
+- --filter
+- --installed
+
+spin plugins*--installed: *nothing
+
+spin plugins*--filter: *nothing
+
+spin plugins*--search: *nothing
+
+spin plugins upgrade:
+- --all
+- --downgrade
+- --file
+- --overide-compatibility-check
+- --url
+- --version
+- --yes
+
+spin plugins upgrade*--all: *nothing
+spin plugins upgrade*--downgrade: *nothing
+spin plugins upgrade*--file: *file
+spin plugins upgrade*--overide-compatibility-check: *nothing
+spin plugins upgrade*--url: *nothing
+spin plugins upgrade*--version: *nothing
+spin plugins upgrade*--yes: *nothing
+
+spin plugins install:
+- $(spin plugins list | awk '{print $1}' | sort -u)
+- --file
+- --overide-compatibility-check
+- --url
+- --version
+- --yes
+
+spin plugins install*--file: *file
+spin plugins install*--overide-compatibility-check: *nothing
+spin plugins install*--url: *nothing
+spin plugins install*--version: *nothing
+spin plugins install*--yes: *nothing
+
+###
+# SPIN REGISTRY
+###
+
+spin registry:
+- login
+- pull
+- push
+
+spin registry login*:
+- --password
+- --password-stdin
+- --username
+
+spin registry*--password: *nothing
+spin registry*--password-stdin: *nothing
+spin registry*--username: *nothing
+
+spin registry push:
+- --build
+- --from
+- --insecure
+
+spin registry push*--insecure: *nothing
+spin registry push*--build: *nothing
+spin registry push*--from: *file
+
+spin registry pull:
+- --insecure
+
+spin registry pull*--insecure: *nothing
+
+###
+# SPIN TEMPLATES
+###
+
+spin templates:
+- install
+- list
+- uninstall
+- upgrade
+
+spin templates install:
+- --branch
+- --dir 
+- --git
+- --upgrade
+
+spin templates install*--branch: *nothing
+spin templates install*--dir: &dir
+- <dir>
+
+spin templates install*--git: *nothing
+spin templates install*--upgrade: *nothing
+
+spin templates uninstall:
+- $(spin templates list | awk -F'|' '/^[[:space:]]*\|/ {gsub(/[[:space:]]+/, " ", $2); print $2}' | grep -v '^Name' | awk '{print $1}')
+
+spin templates list:
+- -tag
+- --verbose
+
+spin templates list*--tag: *nothing
+spin templates list*--verbose: *nothing
+
+spin templates upgrade:
+- --all
+- --branch
+- --repo
+
+spin templates upgrade*--all: *nothing
+spin templates upgrade*--branch: *nothing
+spin templates upgrade*--repo: *nothing
+
+###
+# SPIN NEW
+###
+
+spin new:
+- --accept-defaults
+- --init
+- --output
+- --template
+- --tag
+- --value
+- --values-file
+
+spin new *--accept-defaults: *nothing
+spin new *--init: *nothing
+spin new *--output: *nothing
+
+spin new *--template: 
+- $(spin templates list | awk -F'|' '/^[[:space:]]*\|/ {gsub(/[[:space:]]+/, " ", $2); print $2}' | grep -v '^Name' | awk '{print $1}')
+
+spin new *--tag: *nothing
+spin new *--value: *nothing
+spin new *--values-file: *nothing
+
+###
+# SPIN ADD
+###
+
+spin add:
+- --accept-defaults
+- --init
+- --file
+- --output
+- --template
+- --tag
+- --value
+- --values-file
+
+spin add *--accept-defaults: *nothing
+spin add *--init: *nothing
+spin add *--file: *file
+spin add *--output: *nothing
+
+spin add *--template: 
+- $(spin templates list | awk -F'|' '/^[[:space:]]*\|/ {gsub(/[[:space:]]+/, " ", $2); print $2}' | grep -v '^Name' | awk '{print $1}')
+
+spin add *--tag: *nothing
+spin add *--value: *nothing
+spin add *--values-file: *nothing
+
+###
+# SPIN UP
+###
+
+spin up:
+- --build 
+- --direct-mounts
+- --env
+- --from
+- --insecure
+- --temp
+- --allow-transient-write
+- --cache
+- --disable-cache
+- --disable-pooling
+- --follow
+- --key-value
+- --log-dir
+- --quiet
+- --runtime-config-file
+- --sqlite
+- --state-dir
+
+spin up*--build: *nothing
+spin up*--direct-mounts: *nothing
+spin up*--env: *nothing
+spin up*--from: *nothing
+spin up*--insecure: *nothing
+spin up*--temp: *dir
+spin up*--allow-transient-write: *nothing
+spin up*--cache: *file
+spin up*--disable-cache: *nothing
+spin up*--disable-pooling: *nothing
+spin up*--follow: *nothing
+spin up*--key-value: *nothing
+spin up*--log-dir: *dir
+spin up*--quiet: *nothing
+spin up*--runtime-config-file: *file
+spin up*--sqlite: *nothing
+spin up*--state-dir: *dir
+
+###
+# SPIN WATCH
+###
+
+spin watch:
+- --clear
+- --debounce
+- --from
+- --skip-build
+
+spin watch*--clear: *nothing
+spin watch*--debounce: *nothing
+spin watch*--from: *nothing
+spin watch*--skip-build: *nothing
